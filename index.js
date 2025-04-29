@@ -28,14 +28,16 @@ wss.on('connection', (ws) => {
 
     // Broadcast the received message to all connected clients except the sender
     wss.clients.forEach(client => {
-        client.send(message);
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(message);
+        }
+      });
     });
-  });
 
-  // Handle client disconnection
-  ws.on('close', () => {
-    console.log('Client disconnected');
-  });
+    // Handle client disconnection
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
 });
 
 // Start the server

@@ -44,8 +44,14 @@
       appendMessage("Connected to WebSocket server", "success");
     };
 
-    socket.onmessage = (event) => {
-      appendMessage(`Server: ${event.data}`, "secondary");
+    socket.onmessage = async (event) => {
+        const data = event.data;
+        if (data instanceof Blob) {
+            const text = await data.text();
+            appendMessage(`Server: ${text}`, "secondary");
+        } else {
+            appendMessage(`Server: ${data}`, "secondary");
+        }
     };
 
     sendBtn.onclick = () => {
