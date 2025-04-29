@@ -1,13 +1,19 @@
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
-const port = process.env.PORT || 3000 
+const port = process.env.PORT || 3000;
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// Serve a basic HTML file
+// Middleware to handle CORS (if needed)
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  next();
+});
+
+// Serve the HTML file to the client
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
@@ -16,16 +22,25 @@ app.get('/', (req, res) => {
 wss.on('connection', (ws) => {
   console.log('Client connected');
 
+  // Listen for messages from the client
   ws.on('message', (message) => {
-    ws.send(`${message}`);
+    console.log('Received message:', message);
+
+    // Broadcast the received message to all connected clients except the sender
+    wss.clients.forEach(client => {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
   });
 
+  // Handle client disconnection
   ws.on('close', () => {
     console.log('Client disconnected');
   });
 });
 
-// Start server
-server.listen(port , () => {
-  console.log(`Server listening on port ${port}`);
+// Start the server
+server.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
 });
