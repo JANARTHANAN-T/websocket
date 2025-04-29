@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket with Express</title>
+</head>
+<body>
+  <h1>WebSocket Client</h1>
+  <script>
+    const socket = new WebSocket("ws://localhost:3000");
+
+    socket.onopen = () => {
+      console.log("Connected to WebSocket server");
+      socket.send("Hello from client!");
+      socket.send("how are you")
+    };
+
+    socket.onmessage = (event) => {
+      console.log("Server says:", event.data);
+    };
+  </script>
+</body>
+</html>
