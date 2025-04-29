@@ -6,7 +6,7 @@
 <body>
   <h1>WebSocket Client</h1>
   <script>
-    const socket = new WebSocket(`wss://${process.env.self_host_name}`);
+    const socket = new WebSocket(`wss://${window.location.host}`);
 
     socket.onopen = () => {
       console.log("Connected to WebSocket server");
