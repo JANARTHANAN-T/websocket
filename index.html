@@ -1,21 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>WebSocket with Express</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WebSocket Client</title>
+  <!-- Bootstrap CDN -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
 </head>
-<body>
-  <h1>WebSocket Client</h1>
+<body class="bg-light">
+  <div class="container py-5">
+    <h1 class="text-center mb-4">WebSocket Client</h1>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div id="messages" class="mb-3" style="max-height: 300px; overflow-y: auto;">
+          <!-- Messages will appear here -->
+        </div>
+
+        <div class="input-group">
+          <input
+            id="messageInput"
+            type="text"
+            class="form-control"
+            placeholder="Type your message..."
+          />
+          <button id="sendBtn" class="btn btn-primary">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WebSocket script -->
   <script>
     const socket = new WebSocket(`wss://${window.location.host}`);
+    const messageContainer = document.getElementById("messages");
+    const input = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
 
     socket.onopen = () => {
-      console.log("Connected to WebSocket server");
-      socket.send("Hello from client!");
+      appendMessage("Connected to WebSocket server", "success");
     };
 
     socket.onmessage = (event) => {
-      console.log("Server says:", event.data);
+      appendMessage(`Server: ${event.data}`, "secondary");
     };
+
+    sendBtn.onclick = () => {
+      const msg = input.value.trim();
+      if (msg) {
+        socket.send(msg);
+        appendMessage(`You: ${msg}`, "primary");
+        input.value = "";
+      }
+    };
+
+    function appendMessage(text, type) {
+      const msgElement = document.createElement("div");
+      msgElement.className = `alert alert-${type} py-2 px-3 mb-2`;
+      msgElement.textContent = text;
+      messageContainer.appendChild(msgElement);
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
   </script>
 </body>
 </html>
