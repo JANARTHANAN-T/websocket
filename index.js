@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 
 // WebSocket connection handler
 wss.on('connection', (ws) => {
-  console.log('Client connected: ', ws);
+  console.log('Client connected');
 
   // Listen for messages from the client
   ws.on('message', (message) => {
@@ -28,10 +28,7 @@ wss.on('connection', (ws) => {
 
     // Broadcast the received message to all connected clients except the sender
     wss.clients.forEach(client => {
-        console.log(client);
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
         client.send(message);
-      }
     });
   });
 
