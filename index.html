@@ -6,12 +6,11 @@
 <body>
   <h1>WebSocket Client</h1>
   <script>
-    const socket = new WebSocket("ws://localhost:3000");
+    const socket = new WebSocket(`wss://${process.env.self_host_name}`);
 
     socket.onopen = () => {
       console.log("Connected to WebSocket server");
       socket.send("Hello from client!");
-      socket.send("how are you")
     };
 
     socket.onmessage = (event) => {
